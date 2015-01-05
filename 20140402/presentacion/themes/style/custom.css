@@ -1,0 +1,8 @@
+div.subtitle {
+  position: absolute;
+  top: 65%;
+  text-align: center;
+  right: 0;
+  left: 0;
+  font-size: 1.5em;
+}

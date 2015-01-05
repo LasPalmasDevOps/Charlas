@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=1024, user-scalable=no">
+
+  <title>An introduction to Vagrant</title>
+
+  <!-- Required stylesheet -->
+  <link rel="stylesheet" media="screen" href="core/deck.core.css">
+
+  <!-- Extension CSS files go here. Remove or add as needed. -->
+  <link rel="stylesheet" media="screen" href="extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="extensions/scale/deck.scale.css">
+  <link rel="stylesheet" href="extensions/codemirror/codemirror.css">
+  <link rel="stylesheet" href="extensions/codemirror/deck.codemirror.css">
+  <link rel="stylesheet" href="extensions/codemirror/themes/default.css">
+
+  <!-- Style theme. More available in /themes/style/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="themes/style/swiss.css">
+  <link rel="stylesheet" media="screen" href="themes/style/custom.css">
+
+  <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="themes/transition/horizontal-slide.css">
+
+  <!-- Basic black and white print styles -->
+  <link rel="stylesheet" media="print" href="core/print.css">
+
+  <!-- Required Modernizr file -->
+  <script src="modernizr.custom.js"></script>
+</head>
+<body>
+  <div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+    <section class="slide">
+      <h1><img src="images/logo_vagrant.png"></h1>
+      <div class="subtitle">Las Palmas DevOps, 2014</div>
+    </section>
+
+    <section class="slide">
+      <h2>What?</h2>
+      <ul>
+        <li>Software to create and configure virtual development environments within minutes</li>
+        <li>One file (<em>Vagrantfile</em>), one command and you're ready to go!</li>
+        <li>Pluggable architecture</li>
+        <li>Vagrant is open-source and multi-platform</li>
+        <li>Developed by HashiCorp</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Trust me!</h2>
+      <pre>
+  $ vagrant up
+  Bringing machine 'default' up with 'virtualbox' provider...
+  ==> default: Importing base box 'debian-amd64'...
+  ==> default: Matching MAC address for NAT networking...
+  ==> default: Setting the name of the VM: testing
+  ==> default: Clearing any previously set network interfaces...
+  ==> default: Preparing network interfaces based on configuration...
+      default: Adapter 1: nat
+  ==> default: Forwarding ports...
+      default: 22 => 2222 (adapter 1)
+  ==> default: Running 'pre-boot' VM customizations...
+  ==> default: Booting VM...
+  ...
+  $ vagrant ssh
+  Linux debian-7 3.2.0-4-amd64 #1 SMP Debian 3.2.54-2 x86_64
+
+  vagrant@debian-7:~$
+</pre>
+    </section>
+
+    <section class="slide">
+      <h2>Vagrant takes care of...</h2>
+      <ul>
+        <li>VM creation/configuration (based on a pre-made <em>box</em>)
+          <ul>
+            <li>Different <em>providers</em> are supported</li>
+            <li>Includes tweaking VM parameters as RAM or CPUs</li>
+          </ul>
+        </li>
+        <li>VM booting</li>
+        <li>Network configuration (including port-forwarding)</li>
+        <li>Shared folders</li>
+        <li>Provisioning</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Why?</h2>
+      <ul>
+        <li>A fresh development environment within minutes</li>
+        <li>Almost identical to production environment (<strike>Works on my machine (TM)</strike>)</li>
+        <li>Different environments for different projects</li>
+        <li>Testing</li>
+        <li>Cross-platform</li>
+        <li>You can use your tools (editor, browser, etc.)</li>
+        <li>Keep your base system clean</li>
+        <li>Share!</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h1>The basics</h1>
+    </section>
+
+    <section class="slide">
+      <h2>Initialization</h2>
+      <pre>$ vagrant init hashicorp/precise64</pre>
+      <ul>
+        <li>Create a basic <em>Vagrantfile</em></li>
+        <li>Add it to version control</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Vagrantfile</h2>
+  <textarea id="code" name="code" class="code" mode="ruby" style="display: none;">
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "hashicorp/precise64"
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  config.vm.provider "virtualbox" do |vb|
+    # Don't boot with headless mode
+    vb.gui = true
+
+    # Change memory to 1024MB.
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
+  end
+end
+</textarea>
+    </section>
+
+    <section class="slide">
+      <h2>Shared folders</h2>
+      <ul>
+        <li>Virtualbox: performance can be a problem</li>
+        <li>NFS: not available on Windows</li> <!-- host -->
+        <li>SMB: only works on Windows</li> <!-- host -->
+        <li>RSync: when everything fails...</li>
+      </ul>
+      <textarea id="code" name="code" class="code" mode="ruby" style="display: none;">
+config.vm.synced_folder "html/", "/var/www/html"
+config.vm.synced_folder ".", "/home/vagrant/src", type: "nfs"</textarea>
+    </section>
+
+    <section class="slide">
+      <h2>Multi-machine config</h2>
+      <textarea id="code" name="code" class="code" mode="ruby" style="display: none;">
+config.vm.define "master" do |master|
+  master.vm.network "private_network", ip: "192.168.33.10"
+end
+
+config.vm.define "slave1" do |slave|
+  slave.vm.network "private_network", ip: "192.168.33.11"
+end
+
+config.vm.define "slave2" do |slave|
+  slave.vm.network "private_network", ip: "192.168.33.12"
+end</textarea>
+
+    <pre>$ vagrant up
+$ vagrant up master</pre>
+    </section>
+
+    <section class="slide">
+      <h1>Providers and provisioners</h1>
+    </section>
+
+    <section class="slide">
+      <h2>Providers</h2>
+      <ul>
+        <li>VirtualBox (recommended) and Hyper-V officially supported in 1.5</li>
+        <li>VMWare Fusion/Workstation (not free)</li>
+        <li>Lot of providers:
+          <a href="https://github.com/adrahon/vagrant-kvm">KVM</a>,
+          <a href="https://github.com/fgrehm/vagrant-lxc">LXC</a>,
+          <a href="https://github.com/nsidc/vagrant-vsphere">vSphere</a>,
+          <a href="https://github.com/mitchellh/vagrant-aws">AWS</a>,
+          <a href="https://github.com/smdahlen/vagrant-digitalocean">Digital Ocean</a>,
+          <a href="https://github.com/mitchellh/vagrant-rackspace">Rackspace</a>, ...
+        </li>
+        <li><strong>Vagrant 1.6 will ship more providers</strong></li>
+      </ul>
+      <pre>vagrant up --provider lxc</pre>
+    </section>
+
+    <section class="slide">
+      <h2>Provisioners</h2>
+      <ul>
+        <li>Files, shell scripts, Ansible, Chef, Docker, Puppet and Salt</li>
+        <li>More provisioners: from <a href="https://github.com/fgrehm/ventriloquist">Ventriloquist</a> to <a href="https://github.com/akshaymankar/copy_my_conf">CopyMyConf</a></li>
+        <li>You can use different provisioners in the same <em>Vagrantfile</em></li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Provisioners</h2>
+      <h3>An example</h3>
+      <textarea id="code" name="code" class="code" mode="ruby" style="display: none;">
+config.vm.provision "chef_solo" do |chef|
+  chef.cookbooks_path = "../my-recipes/cookbooks"
+  chef.roles_path = "../my-recipes/roles"
+  chef.data_bags_path = "../my-recipes/data_bags"
+  chef.add_role "web"
+end
+
+config.vm.provision "shell",
+  inline: "apt-get install redis"
+end
+      </textarea>
+    </section>
+
+    <section class="slide">
+      <h1>Boxes</h1>
+    </section>
+
+    <section class="slide">
+      <h2>Virtual machine images</h2>
+      <ul>
+        <li>You can build our own boxes</li>
+        <li>Canonical ships Ubuntu boxes (for VirtualBox and VMWare)</li>
+        <li>A lot of them available at <a href="http://vagrantcloud.com/">Vagrant Cloud</a></li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Managing boxes</h2>
+      <h3>Listing boxes</h3>
+      <pre>
+      $ vagrant box list
+      debian-amd64              (virtualbox)
+      saucy64                   (virtualbox)
+      wheezy-lamp-64            (lxc)
+      wheezy-rails-64           (lxc)
+      </pre>
+    </section>
+
+    <section class="slide">
+      <h2>Managing boxes</h2>
+      <h3>Adding boxes</h3>
+      <pre>$ vagrant box add --name testing /home/user/testing.box
+==> box: Adding box 'testing' (v0) for provider:
+    box: Downloading: file:///home/imo/testing.box
+==> box: Successfully added box 'testing' (v0) for 'lxc'!</pre>
+    </section>
+
+    <section class="slide">
+      <h2>Managing boxes</h2>
+      <h3>Adding boxes</h3>
+      <pre>$ vagrant box add hashicorp/precise64
+==> box: Loading metadata for box 'hashicorp/precise64'
+    box: URL: https://vagrantcloud.com/hashicorp/precise64
+This box can work with multiple providers! The providers that it
+can work with are listed below. Please review the list and choose
+the provider you will be working with.
+
+1) hyperv
+2) virtualbox
+
+Enter your choice: 2
+...</pre>
+    </section>
+
+    <section class="slide">
+      <h2>Managing boxes</h2>
+      <h3>Removing boxes</h3>
+      <pre>
+$ vagrant box rm hashicorp/precise64
+Removing box 'hashicorp/precise64' with provider 'virtualbox'...
+      </pre>
+    </section>
+
+    <section class="slide">
+      <h2>Build your box</h2>
+      <h3>The long way</h3>
+      <ul>
+        <li>Create the virtual machine (40GB to 100GB and 360MB to 512MB)</li>
+        <li>Disable nonessential peripheral controllers (audio, USB, etc.)</li>
+        <li>The first network device must be a NAT device</li>
+        <li>Add a user called <code>vagrant</code></li>
+        <li>Configure public key authentication (you can use insecure Vagrant's private key)</li>
+        <li>Configure <code>sudo</code> so <code>vagrant</code> user could do anything without a password</li>
+        <li>Install VirtualBox Guest Additions</li>
+        <li>Remove udev rules</li>
+        <li>Tweak your system</li>
+      </ul>
+      <pre>
+        vagrant package --base my-first-box
+      </pre>
+    </section>
+
+    <section class="slide">
+      <h2>Build your box</h2>
+      <h3>The cool way</h3>
+      <ul>
+        <li>Packer, <a href="http://packer.io">http://packer.io</a></li>
+        <li>Automated box building</li>
+        <li>JSON specification</li>
+        <li>Builders: EC2, VirtualBox, VMWare, QEMU, Docker...</li>
+        <li>Post-processors: Vagrant, Docker and vSphere</li>
+        <li>Provisioners: as Vagrant</li>
+        <li>Take a look at <a href="https://github.com/opscode/bento">Bento (by Opscode)</a></li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h1>Plugins</h1>
+    </section>
+
+    <section class="slide">
+      <h2>Plugins</h2>
+      <ul>
+        <li>Allow to extend Vagrant</li>
+        <li>Providers, provisioners and commands</li>
+        <li>Pure Ruby (also each plugin is a gem)</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Managing plugins</h2>
+      <h3>Listing</h3>
+      <pre>$ vagrant plugin list
+vagrant-lxc (1.0.0.beta1.dev)</pre>
+      <h3>Installing</h3>
+      <pre>$ vagrant plugin install vagrant-cachier
+Installing the 'vagrant-cachier' plugin. This can take a few minutes...</pre>
+      <h3>Removing</h3>
+      <pre>$ vagrant plugin uninstall vagrant-cachier
+Uninstalling the 'vagrant-cachier' plugin...</pre>
+    </section>
+
+    <section class="slide">
+      <h2>Some plugins</h2>
+      <ul>
+        <li>Lots of them at <a href="https://github.com/mitchellh/vagrant/wiki/Available-Vagrant-Plugins">Vagrant's wiki</a></li>
+        <li><a href="https://github.com/phinze/landrush">landrush</a></li> <!-- DNS for Vagrant -->
+        <li><a href="https://github.com/fgrehm/vagrant-cachier">vagrant-cachier</a></li>
+        <li><a href="https://github.com/mitchellh/vagrant-rake">vagrant-rake</a></li>
+        <li><a href="https://github.com/tnayuki/vagrant-rdp">vagrant-rdp</a></li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h1>Vagrant Cloud</h1>
+    </section>
+
+    <section class="slide">
+      <h2>Vagrant Cloud</h2>
+      <ul>
+        <li>Developed by HashiCorp</li>
+        <li>Free for community (and during the beta)</li>
+        <li>Box distribution and discover</li>
+        <li>Vagrant Share</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Vagrant Share</h2>
+      <ul>
+        <li>Share access to your Vagrant environment</li>
+        <li>Via SSH, HTTP and HTTPS</li>
+        <li>It creates a (funny) URL on the fly to access to your virtual machine</li>
+        <li>You must be registered at Vagrant Cloud</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Vagrant Share</h2>
+      <h3>An example</h3>
+      <pre>$ vagrant login
+Username or Email: some.user@gmail.com
+Password (will be hidden):
+You're now logged in!
+
+$ vagrant share --http 3000
+...
+==> default: URL: http://antsy-gopher-3497.vagrantshare.com
+</pre>
+    </section>
+
+    <section class="slide">
+      <h1>What about you?</h1>
+    </section>
+
+    <section class="slide">
+      <h2>References</h2>
+      <ul>
+        <li>Vagrant: <a href="http://vagrantup.com/">http://vagrantup.com/</a></li>
+        <li>Github: <a href="https://githubcom/mitchellh/vagrant">https://githubcom/mitchellh/vagrant</a></li>
+        <li>Vagrant Cloud: <a href="https://vagrantcloud.com/">https://vagrantcloud.com/</a>
+        <li>HashiCorp: <a href="http://hashicorp.com/">http://hashicorp.com/</a>
+        <li>Mitchell Hashimoto, <a href="https://twitter.com/mitchellh">@mitchellh</a></li>
+      </ul>
+    </section>
+
+    <!-- End slides. -->
+
+    <!-- Begin extension snippets. Add or remove as needed. -->
+
+    <!-- deck.navigation snippet -->
+    <div aria-role="navigation">
+      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+    </div>
+
+    <!-- deck.status snippet -->
+    <p class="deck-status" aria-role="status">
+      <span class="deck-status-current"></span>
+      /
+      <span class="deck-status-total"></span>
+    </p>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <!-- End extension snippets. -->
+  </div>
+
+<!-- Required JS files. -->
+<script src="jquery.min.js"></script>
+<script src="core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="extensions/menu/deck.menu.js"></script>
+<script src="extensions/goto/deck.goto.js"></script>
+<script src="extensions/status/deck.status.js"></script>
+<script src="extensions/navigation/deck.navigation.js"></script>
+<script src="extensions/scale/deck.scale.js"></script>
+<script src="extensions/codemirror/codemirror.js"></script>
+<script src="extensions/codemirror/mode/ruby/ruby.js"></script>
+<script src="extensions/codemirror/mode/yaml/yaml.js"></script>
+<script src="extensions/codemirror/deck.codemirror.js"></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+  $(function() {
+    $.deck('.slide');
+  });
+</script>
+</body>
+</html>
