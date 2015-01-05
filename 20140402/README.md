@@ -2,7 +2,7 @@
 
 ## Título
 
-* Charla de introducción a Vagrant  
+* Introducción a Vagrant  
 
 ## Resumen
 
@@ -10,11 +10,11 @@
 [Imobach](http://twitter.com/@imobachgs) nos habló sobre [Vagrant](http://www.vagrantup.com/)
 
 
-*Vagrant* es una herramienta que *permite la creación y configuración de entornos virtualizados en cuestión de minutos.*
+**Vagrant** es una herramienta que **permite la creación y configuración de entornos virtualizados en cuestión de minutos.**
 
 Esta charla se planteó con un doble objetivo:
 
-• Servir como introducción a *Vagrant* para todos aquellos que no conozcan la herramienta.
+• Servir como introducción a **Vagrant** para todos aquellos que no conozcan la herramienta.
 
 • Plantear una puesta en común de la experiencia que, los que la usan, han tenido con ella: flujos de trabajo, problemas, casos de éxito, etc. Todos están invitados a participar.
 
@@ -29,7 +29,7 @@ Sin embargo, no hizo falta conocer ninguna de ellas para seguir la charla.
 
 ## Presentación
 
-[Enlace](#) -> Por incluir
+[Enlace](presentacion)
 
 ## Otros
 
