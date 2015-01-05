@@ -1,10 +1,10 @@
 # DevOps
-## ¿A quién va dirigido?
+## ¿ A quién va dirigido ?
 
 * Técnicos que quieran aprender o reciclarse
 * Expertos que quieran compartir su experiencia
 
-## ¿Cuánto cuesta?
+## ¿ Cuánto cuesta ?
 
 * NADA
 
