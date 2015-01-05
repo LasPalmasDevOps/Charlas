@@ -1,0 +1,60 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  # Main control machine
+  config.vm.define "main" do |m|
+    m.vm.box = "hashicorp/precise64"
+    m.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "256"]
+    end
+    m.vm.network "private_network", ip: "192.168.33.10"
+  end
+
+  # Database server 1
+  config.vm.define "db1" do |m|
+    m.vm.box = "hashicorp/precise64"
+    m.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "128"]
+    end
+    m.vm.network "private_network", ip: "192.168.33.11"
+  end
+
+  # Database server 2
+  config.vm.define "db2" do |m|
+    m.vm.box = "hashicorp/precise64"
+    m.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "128"]
+    end
+    m.vm.network "private_network", ip: "192.168.33.12"
+  end
+
+  # Webserver 1
+  config.vm.define "web1" do |m|
+    m.vm.box = "hashicorp/precise64"
+    m.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "128"]
+    end
+    m.vm.network "private_network", ip: "192.168.33.21"
+  end
+
+  # Webserver 2
+  config.vm.define "web2" do |m|
+    m.vm.box = "hashicorp/precise64"
+    m.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "128"]
+    end
+    m.vm.network "private_network", ip: "192.168.33.22"
+  end
+
+  # Provision with ansible
+  config.vm.provision "ansible" do |ansible|
+    ansible.inventory_path = "src/ansible/hosts"
+    ansible.playbook = "src/ansible/playbooks/provision.yml"
+    ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
+  end
+
+end

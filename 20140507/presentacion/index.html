@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=1024, user-scalable=no">
+
+  <title>Ansible - Simple IT Automation</title>
+
+  <!-- Required stylesheet -->
+  <link rel="stylesheet" href="core/deck.core.css">
+
+  <!-- Extension CSS files go here. Remove or add as needed. -->
+  <link rel="stylesheet" media="screen" href="extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="extensions/scale/deck.scale.css">
+
+  <!-- Style theme. More available in /themes/style/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="themes/style/web-2.0.css">
+
+  <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="themes/transition/horizontal-slide.css">
+
+  <!-- Basic black and white print styles -->
+  <link rel="stylesheet" media="print" href="core/print.css">
+
+  <!-- Required Modernizr file -->
+  <script src="modernizr.custom.js"></script>
+</head>
+<body>
+  <div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+    <section class="slide">
+      <img src="img/ansible.svg">
+    </section>
+
+    <section class="slide">
+      <h1>What the hell is Ansible?</h1>
+    </section>
+
+    <section class="slide">
+      <h1>Simple IT automation</h1>
+    </section>
+
+    <section class="slide">
+      <h2>What does this mean?</h2>
+      <p>Ansible is an orchestration engine for automation of:</p>
+      <ul>
+      	<li>Configuration management</li>
+      	<li>Application deployment</li>     	
+      	<li>Common IT tasks</li>     	
+      </ul>
+    </section>
+    
+    <section class="slide">
+      <h2>How it works?</h2>
+      <ol>
+      	<li>Ansible connects to remote system</li>
+      	<li>Pushes an <strong>ANSIBLE MODULE</strong></li>
+      	<li>Executes the module</li>
+      	<li>Removes the module from the remote system when finished</li>
+      </ol>
+    </section>
+
+    <section class="slide">
+      <h2>What do we need?</h2>
+      <ol>
+      	<li>No servers</li>
+      	<li>No agents</li>
+      	<li>No daemons</li>
+      	<li>No databases</li>
+      </ol>
+      <section class="slide">
+      	<h2>Only SSH and python required</h2>
+      </section>
+    </section>
+
+    <section class="slide">
+      <h2>Installation</h2>
+      <pre>
+$ sudo easy_install pip
+$ sudo pip install ansible
+      </pre>
+      <p>Only needed in one machine (your laptop will do)</p>
+    </section>
+
+    <section class="slide">
+      <h2>Inventory</h2>
+      <pre>
+[webservers]
+www1.example.com
+www2.example.com
+www3.example.com
+
+[dbservers]
+db1.example.com
+db2.example.com
+db3.example.com
+
+[laspalmas]
+www1.example.com
+db1.example.com
+
+[madrid]
+www2.example.com
+db2.example.com
+www3.example.com
+db3.example.com
+      </pre>
+    </section>
+	
+    <section class="slide">
+      <h2>Let's try it!</h2>
+      
+      <section class="slide">
+        <p>Reboot a machine</p>
+        <pre>
+$ ansible db3.example.com -a "/usr/sbin/reboot"
+        </pre>
+      </section>
+      
+      <section class="slide">
+        <p>Ping all machines</p>
+        <pre>
+$ ansible all -m ping 
+        </pre>
+      </section>
+
+      <section class="slide">
+        <p>Check we have httpd installed in all our webservers</p>
+        <pre>
+$ ansible webservers -m yum "name=httpd state=installed"
+        </pre>
+      </section>
+      
+      <section class="slide">
+        <p>Restart apache only in Madrid webservers</p>
+        <pre>
+$ ansible webservers -a "/usr/bin/apachectl restart" --limit madrid
+        </pre>
+      </section>
+      
+    </section>
+
+    <section class="slide">
+      <h2>Modules</h2>
+      <ul>
+      	<li>Work units sent to a host by Ansible</li>
+      	<li>There are loads of modules (<a href="http://docs.ansible.com/modules_by_category.html">Ansible module index</a>)</li>
+        <li>Don't you find what you need? <strong>Write your own!</strong>
+        	<ul>
+        		<li>Can be written in any language that can handle JSON (Ruby, Python, bash, etc).</li>
+        		<li>Inventory can plug in to any datasource by writing a program that speaks to that datasource and returns JSON</li>
+        		<li>Python APIs for extending Ansible’s connection types, callbacks, new server side behaviors, etc.</li>
+        	</ul>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Playbooks</h2>
+      <ul>
+        <li>Simple automation language</li>
+        <li>Describes a policy or IT task/group of tasks</li>
+        <li>Designed to be human readable</li>
+        <li>Idempotence on multiple executions</li>
+        <li>Written in YAML</li>
+      </ul>
+
+      <section class="slide">
+	      <blockquote cite="http://docs.ansible.com/playbooks.html">
+	        <p>If Ansible modules are the tools in your workshop, playbooks are your design plans.</p>
+		    <p><cite>Ansible documentation</cite></p>
+	      </blockquote>
+      </section>
+
+    </section>
+
+    <section class="slide">
+    	
+    	<h2>What can I do with a Playbook?</h2>
+    	<section class="slide">
+    		<h3>Playbooks: Easy mode</h3>
+    		<ul>
+    			<li>Manage configurations</li>
+    			<li>Deploy apps</li>
+    			<li>Execute tasks</li>
+	    	</ul>
+    	</section>
+
+    	<section class="slide">
+    		<h3>Playbooks: "Fuck yeah!" mode</h3>
+    		<ul>
+    			<li>Multi-tier rollouts involving rolling updates</li>
+    			<li>Delegate actions to other hosts</li>
+    			<li>Interacting with monitoring servers, load balancers, etc.</li>
+	    	</ul>
+    	</section>
+    </section>
+
+    <section class="slide">
+      <br />
+      <blockquote>
+        <p><img src="img/playbook.jpg"></p>
+        <p>Suit up bro! Let's use playbooks</p>
+        <p><cite>Barney Stinson</cite></p>
+      </blockquote>
+    </section>
+
+    <section class="slide">
+      <h2>Example of basic playbook</h2>
+      <pre>
+---
+- hosts: webservers
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: root
+  tasks:
+  - name: ensure apache is at the latest version
+    yum: pkg=httpd state=latest
+  - name: write the apache config file
+    template: src=/srv/httpd.j2 dest=/etc/httpd.conf
+    notify:
+    - restart apache
+  - name: ensure apache is running
+    service: name=httpd state=started
+  handlers:
+    - name: restart apache
+      service: name=httpd state=restarted
+      </pre>
+    </section>
+
+    <section class="slide">
+      <h2>Playbook execution</h2>
+      <section class="slide">
+      	<p>Execute a playbook</p>
+        <pre>
+$ ansible-playbook playbook.yml
+        </pre>
+      </section>
+
+      <section class="slide">
+        <p>Show hosts that would be affected by a playbook before running it</>
+        <pre>
+$ ansible-playbook playbook.yml --list-hosts
+        </pre>
+      </section>
+
+    </section>
+
+    <section class="slide">
+      <h2>Roles</h2>
+      <ul>
+        <li>A way to encapsulate playbooks</li>
+        <li>Meant to be reusable</li>
+        <li>Easy to share with others</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Example ansible project structure</h2>
+      <pre>
+site.yml
+webservers.yml
+fooservers.yml
+roles/
+   common/
+     files/
+     templates/
+     tasks/
+     handlers/
+     vars/
+     meta/
+   webservers/
+     files/
+     templates/
+     tasks/
+     handlers/
+     vars/
+     meta/
+      </pre>
+    </section>
+
+    <section class="slide">
+      <h2>Use roles in our playbook</h2>
+      <pre>
+---
+- hosts: webservers
+  roles:
+     - common
+     - webservers
+     { role: some_role, when: "ansible_os_family == 'RedHat'" }
+      </pre>
+    </section>
+
+    <section class="slide">
+      <h2>Ansible Galaxy</h2>
+      <img src="img/galaxy.png">
+      <ul>
+        <li>Site for finding, downloading, rating, and reviewing community developed roles</li>
+        <li>Free</li>
+        <li>You can download roles directly using ansible-galaxy command
+          <pre>
+$ ansible-galaxy install username.rolename
+          </pre>
+        </li>
+        <li>URL: <a href="http://galaxy.ansible.com/">http://galaxy.ansible.com/</a></li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Ansible Tower</h2>
+      <img src="img/tower.png">
+      <ul>
+        <li>UI Dashboard</li>
+        <li>Execute or schedule jobs</li>
+        <li>Grant access based on team roles</li>
+        <li>Integration
+          <ul>
+            <li>Continuous integration tools via REST API</li>
+            <li>Command line tool for integration with scripts</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h1>Thank you for coming</h1>
+    </section>
+
+    <!-- End slides. -->
+
+    <!-- Begin extension snippets. Add or remove as needed. -->
+
+    <!-- deck.navigation snippet -->
+    <div aria-role="navigation">
+      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+    </div>
+
+    <!-- deck.status snippet -->
+    <p class="deck-status" aria-role="status">
+      <span class="deck-status-current"></span>
+      /
+      <span class="deck-status-total"></span>
+    </p>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <!-- End extension snippets. -->
+  </div>
+
+<!-- Required JS files. -->
+<script src="jquery.min.js"></script>
+<script src="core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="extensions/menu/deck.menu.js"></script>
+<script src="extensions/goto/deck.goto.js"></script>
+<script src="extensions/status/deck.status.js"></script>
+<script src="extensions/navigation/deck.navigation.js"></script>
+<script src="extensions/scale/deck.scale.js"></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+  $(function() {
+    $.deck('.slide');
+  });
+</script>
+</body>
+</html>
