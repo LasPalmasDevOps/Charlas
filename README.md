@@ -1,8 +1,8 @@
 # Charlas de Las Palmas DevOps
 
-En este repositorio se usará como un histórico de las charlas del grupo [Las Palmas DevOps](https://groups.google.com/forum/#!forum/laspalmas-devops) ([MeetUp](http://www.meetup.com/Las-Palmas-DevOps/)).
+En este repositorio se usará como un histórico de las charlas del grupo [Las Palmas DevOps](https://groups.google.com/forum/#!forum/laspalmas-devops).
 
-Si quieres estar al tanto de nuevas charlas te recomendamos que estés atento al MeetUp.
+Si quieres estar al tanto de nuevas charlas te recomendamos que estés atento al [MeetUp](http://www.meetup.com/Las-Palmas-DevOps/).
 
 ## Histórico:
 
