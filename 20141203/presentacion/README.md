@@ -66,6 +66,6 @@
 
 ## ¿Dudas?
 
-Juanje Ojeda
-@juanjeojeda
+* Juanje Ojeda
+* @juanjeojeda
 
