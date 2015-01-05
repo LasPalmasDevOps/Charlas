@@ -21,7 +21,7 @@
 ## Sí, sí, pero ¿ qué se va a dar?
 
 * Sistemas de control de versiones (Git)
-* Sistemas de gestiÃ³n de la configuraciÃ³n (Chef, Puppet, Ansible...)
+* Sistemas de gestión de la configuración (Chef, Puppet, Ansible...)
 * Cómo probar nuestro código y nuestra infraestructura
 * Cómo montar un entorno local de pruebas de forma sencilla
 * Integración continua
