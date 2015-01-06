@@ -34,4 +34,4 @@ La charla ha sido genérica y no basada en ninguna herramienta en especial, pero
 
 ## Presentación
 
-[Enlace](#) -> Por incluir
+[Enlace](https://speakerdeck.com/juanje/configuration-management-tools)
