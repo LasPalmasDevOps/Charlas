@@ -1,0 +1,43 @@
+---
+- hosts: webservers
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: vagrant
+  sudo: yes
+  tasks:
+  - name: ensure apache is at the latest version
+    apt: update_cache=yes cache_valid_time=3600 pkg=httpd state=latest
+  - name: write the apache config file
+    template: src=/ansible/templates/apache.j2 dest=/etc/httpd.conf
+    notify:
+    - restart apache
+  - name: ensure apache is running
+    service: name=httpd state=started
+  handlers:
+    - name: restart apache
+      service: name=httpd state=restarted
+
+- hosts: dbservers
+  remote_user: vagrant
+  sudo: yes
+  tasks:
+  - name: Ensure mysql and python-mysqldb are at the latest version
+    apt: update_cache=yes cache_valid_time=3600 pkg={{ item }} state=latest
+    with_items:
+      - mysql-server
+      - python-mysqldb
+  - name: Create database for our project
+    mysql_db: name=project state=present
+  - name: Create database user
+    mysql_user: name=project password=12345 priv=project.*:ALL state=present
+  - name: ensure mysql is running
+    service: name=mysql state=started
+
+- hosts: control
+  remote_user: vagrant
+  sudo: yes
+  tasks:
+  - name: install ansible from package system
+    apt: update_cache=yes cache_valid_time=3600 pkg=ansible state=latest
+

@@ -1,0 +1,18 @@
+[webservers]
+web1 ansible_ssh_host=192.168.33.21
+web2 ansible_ssh_host=192.168.33.22
+
+[dbservers]
+db1 ansible_ssh_host=192.168.33.11
+db2 ansible_ssh_host=192.168.33.12
+
+[location1]
+web1
+db1
+
+[location2]
+web2
+db2
+
+[control]
+main ansible_ssh_host=192.168.33.10
