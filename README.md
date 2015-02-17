@@ -13,3 +13,4 @@ Si quieres estar al tanto de nuevas charlas te recomendamos que estés atento al
 1. [Introducción a Ansible](20140507/README.md)
 1. [Introducción a Puppet](20140604/README.md)
 1. [Introducción a talleres](20141203/README.md) 
+1. [Automation in AngularJS](20150212/README.md) 
